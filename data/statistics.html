@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống kê kết quả học tập</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="statistics">
+
+<header>
+  <h1>Thống kê kết quả học tập</h1>
+  <p>Thống kê điểm và xếp loại sinh viên</p>
+</header>
+
+<nav>
+  <a href="index.html">Trang chủ</a>
+  <a href="statistics.html">Thống kê</a>
+  <a href="comparison.html">So sánh sinh viên</a>
+</nav>
+
+<main class="container">
+
+  <section class="panel">
+    <h2>Sinh viên có điểm trung bình cao nhất</h2>
+    <div id="highestAverage"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Thống kê xếp loại</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Xếp loại</th>
+            <th>Số sinh viên</th>
+          </tr>
+        </thead>
+        <tbody id="classificationTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Sinh viên có ít nhất một môn dưới 5</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Môn dưới 5</th>
+          </tr>
+        </thead>
+        <tbody id="belowFiveTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Thống kê điểm các môn</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Môn học</th>
+            <th>Điểm trung bình</th>
+            <th>Điểm thấp nhất</th>
+            <th>Điểm cao nhất</th>
+          </tr>
+        </thead>
+        <tbody id="subjectStatistics"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Quản lý điểm sinh viên</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
