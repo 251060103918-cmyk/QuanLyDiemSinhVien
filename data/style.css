@@ -1,0 +1,288 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --background: #f1f5f9;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #dbe3ee;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--background);
+}
+
+header {
+  padding: 35px 20px;
+  color: white;
+  text-align: center;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+header p {
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+nav a {
+  padding: 10px 16px;
+  color: var(--primary);
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+nav a:hover {
+  background: #eff6ff;
+}
+
+.container {
+  width: min(1200px, 94%);
+  margin: 25px auto;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.card,
+.panel {
+  padding: 22px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+}
+
+.card {
+  border-top: 4px solid var(--primary);
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: 24px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.panel {
+  margin-bottom: 25px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  color: var(--primary-dark);
+  font-size: 21px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: white;
+  font: inherit;
+}
+
+.toolbar input {
+  flex: 1;
+  min-width: 220px;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #bfdbfe;
+  border-color: var(--primary);
+}
+
+button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 7px;
+  background: var(--primary);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: #eff6ff;
+  color: #1e40af;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.badge.Giỏi {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.Khá {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.Trung-bình {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge.Yếu {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.form-grid label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+#editMessage,
+#comparisonMessage {
+  color: #166534;
+  font-weight: bold;
+}
+
+.error {
+  padding: 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  text-align: center;
+}
+
+footer {
+  margin-top: 35px;
+  padding: 18px;
+  color: white;
+  background: #1e293b;
+  text-align: center;
+}
+
+footer p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 25px 12px;
+  }
+
+  header h1 {
+    font-size: 23px;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  nav a {
+    text-align: center;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    width: 95%;
+  }
+
+  .panel,
+  .card {
+    padding: 15px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+}
