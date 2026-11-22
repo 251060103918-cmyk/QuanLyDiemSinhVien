@@ -5,6 +5,7 @@
 let students = [];
 let subjects = [];
 let grades = [];
+
 async function loadData() {
   try {
     const [studentResponse, subjectResponse, gradeResponse] =
@@ -24,6 +25,7 @@ async function loadData() {
     subjects = await subjectResponse.json();
     grades = await gradeResponse.json();
 
+    // Lấy điểm đã chỉnh sửa từ trình duyệt nếu có
     const savedGrades = localStorage.getItem("studentGrades");
 
     if (savedGrades) {
@@ -58,20 +60,26 @@ function getStudentScores(studentId) {
 // 2. TÍNH ĐIỂM TRUNG BÌNH
 // ========================================
 
+// Điểm môn = chuyên cần 10% + giữa kỳ 40% + cuối kỳ 50%
 function calculateSubjectAverage(scores) {
   const [attendance, midterm, finalExam] = scores;
 
   return Number(
-    (attendance * 0.1 + midterm * 0.4 + finalExam * 0.5)
-      .toFixed(2)
+    (
+      attendance * 0.1 +
+      midterm * 0.4 +
+      finalExam * 0.5
+    ).toFixed(2)
   );
 }
 
+// Điểm trung bình học kỳ = trung bình 5 môn
 function calculateSemesterAverage(subjectAverages) {
   if (!subjectAverages.length) return 0;
 
   const total = subjectAverages.reduce(
-    (sum, score) => sum + score, 0
+    (sum, score) => sum + score,
+    0
   );
 
   return Number(
@@ -103,7 +111,8 @@ function calculateBasicScholarship(average) {
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat("vi-VN").format(amount) + " VNĐ";
+  return new Intl.NumberFormat("vi-VN")
+    .format(amount) + " VNĐ";
 }
 
 
@@ -128,7 +137,8 @@ function getStudentResults() {
       subjectAverages,
       semesterAverage,
       classification: classifyStudent(semesterAverage),
-      basicScholarship: calculateBasicScholarship(semesterAverage),
+      basicScholarship:
+        calculateBasicScholarship(semesterAverage),
       rank: 0,
       scholarshipGroup: "Không thuộc nhóm",
       fundScholarship: 0
@@ -147,6 +157,7 @@ function calculateScholarships(results) {
       return b.semesterAverage - a.semesterAverage;
     }
 
+    // Nếu bằng điểm thì xếp theo mã sinh viên
     return a.id.localeCompare(b.id);
   });
 
@@ -184,15 +195,21 @@ function calculateScholarships(results) {
   });
 
   groups.forEach(group => {
-    const members = ranked.slice(group.start, group.end);
+    const members = ranked.slice(
+      group.start,
+      group.end
+    );
 
     if (members.length === 0) return;
 
+    // Chia đều, làm tròn đến 1.000 VNĐ
     const base = Math.floor(
       group.fund / members.length / 1000
     ) * 1000;
 
-    const remainder = group.fund - base * members.length;
+    const remainder = group.fund -
+      base * members.length;
+
     const bonusCount = remainder / 1000;
 
     members.forEach((student, index) => {
@@ -220,19 +237,26 @@ function sortVietnameseNames(list) {
     const partsA = a.name.trim().split(/\s+/);
     const partsB = b.name.trim().split(/\s+/);
 
+    // Tên gọi đứng cuối
     const givenA = partsA.pop();
     const givenB = partsB.pop();
 
-    const compareGiven = viCollator.compare(givenA, givenB);
+    const compareGiven =
+      viCollator.compare(givenA, givenB);
 
-    if (compareGiven !== 0) return compareGiven;
+    if (compareGiven !== 0) {
+      return compareGiven;
+    }
 
+    // Nếu trùng tên gọi thì so họ và tên đệm
     const compareRemaining = viCollator.compare(
       partsA.join(" "),
       partsB.join(" ")
     );
 
-    if (compareRemaining !== 0) return compareRemaining;
+    if (compareRemaining !== 0) {
+      return compareRemaining;
+    }
 
     return a.id.localeCompare(b.id);
   });
@@ -251,7 +275,9 @@ function updateDashboard(results) {
 
   const average = results.length
     ? results.reduce(
-        (sum, student) => sum + student.semesterAverage, 0
+        (sum, student) =>
+          sum + student.semesterAverage,
+        0
       ) / results.length
     : 0;
 
@@ -259,16 +285,22 @@ function updateDashboard(results) {
     average.toFixed(2);
 
   document.getElementById("excellentCount").textContent =
-    results.filter(s => s.classification === "Giỏi").length;
+    results.filter(
+      student => student.classification === "Giỏi"
+    ).length;
 
   const totalScholarship = results.reduce(
-    (sum, student) => sum + student.basicScholarship, 0
+    (sum, student) =>
+      sum + student.basicScholarship,
+    0
   );
 
   document.getElementById("totalScholarship").textContent =
     formatCurrency(totalScholarship);
 }
 
+
+// Hiển thị bảng sinh viên
 function renderStudentTable(results) {
   const tbody = document.getElementById("studentTable");
 
@@ -285,16 +317,22 @@ function renderStudentTable(results) {
         <td>${student.name}</td>
         <td>${student.class}</td>
         <td>${student.semesterAverage.toFixed(2)}</td>
+
         <td>
           <span class="badge ${badgeClass}">
             ${student.classification}
           </span>
         </td>
+
         <td>${formatCurrency(student.basicScholarship)}</td>
         <td>${student.scholarshipGroup}</td>
         <td>${formatCurrency(student.fundScholarship)}</td>
+
         <td>
-          <button class="detail-button" data-id="${student.id}">
+          <button
+            class="detail-button"
+            data-id="${student.id}"
+            type="button">
             Xem
           </button>
         </td>
@@ -302,15 +340,21 @@ function renderStudentTable(results) {
     `;
   }).join("");
 
-  tbody.querySelectorAll(".detail-button").forEach(button => {
-    button.addEventListener("click", () => {
-      showStudentDetail(button.dataset.id);
+  // Gắn chức năng cho nút Xem
+  tbody.querySelectorAll(".detail-button")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        showStudentDetail(button.dataset.id);
+      });
     });
-  });
 }
 
+
+// Tìm kiếm và cập nhật danh sách
 function refreshHome() {
-  const results = calculateScholarships(getStudentResults());
+  const results = calculateScholarships(
+    getStudentResults()
+  );
 
   updateDashboard(results);
 
@@ -329,17 +373,38 @@ function refreshHome() {
   renderStudentTable(filtered);
 }
 
+
+// ========================================
+// 9. CHI TIẾT ĐIỂM SINH VIÊN — ĐÃ SỬA
+// ========================================
+
 function showStudentDetail(studentId) {
   const student = getStudentResults().find(
     item => item.id === studentId
   );
 
-  if (!student) return;
+  if (!student) {
+    alert("Không tìm thấy sinh viên.");
+    return;
+  }
 
-  document.getElementById("detailStudentName").textContent =
+  const detailName =
+    document.getElementById("detailStudentName");
+
+  const detailTable =
+    document.getElementById("detailTable");
+
+  if (!detailName || !detailTable) {
+    alert("Không tìm thấy khu vực hiển thị chi tiết.");
+    return;
+  }
+
+  // Hiển thị mã sinh viên và họ tên
+  detailName.textContent =
     `${student.id} - ${student.name}`;
 
-  document.getElementById("detailTable").innerHTML =
+  // Hiển thị điểm của 5 môn
+  detailTable.innerHTML =
     student.scores.map((score, index) => `
       <tr>
         <td>${subjects[index].name}</td>
@@ -349,16 +414,25 @@ function showStudentDetail(studentId) {
         <td>${student.subjectAverages[index].toFixed(2)}</td>
       </tr>
     `).join("");
+
+  // TỰ ĐỘNG CUỘN ĐẾN KHU VỰC CHI TIẾT
+  detailName.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
 }
 
 
 // ========================================
-// 9. CHỈNH SỬA ĐIỂM
+// 10. CHỈNH SỬA ĐIỂM
 // ========================================
 
 function fillEditOptions() {
-  const studentSelect = document.getElementById("editStudentId");
-  const subjectSelect = document.getElementById("editSubject");
+  const studentSelect =
+    document.getElementById("editStudentId");
+
+  const subjectSelect =
+    document.getElementById("editSubject");
 
   studentSelect.innerHTML = students.map(student => `
     <option value="${student.id}">
@@ -366,15 +440,21 @@ function fillEditOptions() {
     </option>
   `).join("");
 
-  subjectSelect.innerHTML = subjects.map((subject, index) => `
-    <option value="${index}">${subject.name}</option>
-  `).join("");
+  subjectSelect.innerHTML = subjects.map(
+    (subject, index) => `
+      <option value="${index}">
+        ${subject.name}
+      </option>
+    `
+  ).join("");
 
   loadSelectedGrade();
 }
 
+
 function loadSelectedGrade() {
-  const studentId = document.getElementById("editStudentId").value;
+  const studentId =
+    document.getElementById("editStudentId").value;
 
   const subjectIndex = Number(
     document.getElementById("editSubject").value
@@ -382,19 +462,27 @@ function loadSelectedGrade() {
 
   if (!studentId || isNaN(subjectIndex)) return;
 
-  const scores = getStudentScores(studentId)[subjectIndex];
+  const scores =
+    getStudentScores(studentId)[subjectIndex];
 
   if (!scores) return;
 
-  document.getElementById("attendance").value = scores[0];
-  document.getElementById("midterm").value = scores[1];
-  document.getElementById("finalExam").value = scores[2];
+  document.getElementById("attendance").value =
+    scores[0];
+
+  document.getElementById("midterm").value =
+    scores[1];
+
+  document.getElementById("finalExam").value =
+    scores[2];
 }
+
 
 function handleGradeSubmit(event) {
   event.preventDefault();
 
-  const studentId = document.getElementById("editStudentId").value;
+  const studentId =
+    document.getElementById("editStudentId").value;
 
   const subjectIndex = Number(
     document.getElementById("editSubject").value
@@ -406,8 +494,11 @@ function handleGradeSubmit(event) {
     Number(document.getElementById("finalExam").value)
   ];
 
+  // Kiểm tra điểm hợp lệ
   if (!scores.every(score =>
-    Number.isFinite(score) && score >= 0 && score <= 10
+    Number.isFinite(score) &&
+    score >= 0 &&
+    score <= 10
   )) {
     document.getElementById("editMessage").textContent =
       "Điểm phải từ 0 đến 10.";
@@ -421,20 +512,28 @@ function handleGradeSubmit(event) {
 
   if (!record) return;
 
+  // Cập nhật điểm
   record.scores[subjectIndex] = scores;
 
-  localStorage.setItem("studentGrades", JSON.stringify(grades));
+  // Lưu vào trình duyệt
+  localStorage.setItem(
+    "studentGrades",
+    JSON.stringify(grades)
+  );
 
   document.getElementById("editMessage").textContent =
     "Cập nhật điểm thành công.";
 
+  // Tính toán và hiển thị lại
   refreshHome();
+
+  // Hiển thị chi tiết sinh viên sau khi cập nhật
   showStudentDetail(studentId);
 }
 
 
 // ========================================
-// 10. THỐNG KÊ
+// 11. THỐNG KÊ
 // ========================================
 
 function renderHighestAverage(results) {
@@ -447,22 +546,25 @@ function renderHighestAverage(results) {
   );
 
   document.getElementById("highestAverage").innerHTML = `
-    <p>Điểm trung bình cao nhất:
+    <p>
+      Điểm trung bình cao nhất:
       <strong>${highest.toFixed(2)}</strong>
     </p>
+
     <ul>
-      ${topStudents.map(student =>
-        `<li>${student.id} - ${student.name}</li>`
-      ).join("")}
+      ${topStudents.map(student => `
+        <li>${student.id} - ${student.name}</li>
+      `).join("")}
     </ul>
   `;
 }
 
+
 function renderClassificationStatistics(results) {
   const types = ["Giỏi", "Khá", "Trung bình", "Yếu"];
 
-  document.getElementById("classificationTable").innerHTML =
-    types.map(type => {
+  document.getElementById("classificationTable")
+    .innerHTML = types.map(type => {
       const count = results.filter(
         student => student.classification === type
       ).length;
@@ -476,13 +578,14 @@ function renderClassificationStatistics(results) {
     }).join("");
 }
 
+
 function renderBelowFive(results) {
   const list = results.filter(student =>
     student.subjectAverages.some(score => score < 5)
   );
 
-  document.getElementById("belowFiveTable").innerHTML =
-    list.map(student => {
+  document.getElementById("belowFiveTable")
+    .innerHTML = list.map(student => {
       const belowSubjects = student.subjectAverages
         .map((score, index) =>
           score < 5 ? subjects[index].name : null
@@ -499,15 +602,17 @@ function renderBelowFive(results) {
     }).join("");
 }
 
+
 function renderSubjectStatistics(results) {
-  document.getElementById("subjectStatistics").innerHTML =
-    subjects.map((subject, index) => {
+  document.getElementById("subjectStatistics")
+    .innerHTML = subjects.map((subject, index) => {
       const scores = results.map(
         student => student.subjectAverages[index]
       );
 
       const average = scores.reduce(
-        (sum, score) => sum + score, 0
+        (sum, score) => sum + score,
+        0
       ) / scores.length;
 
       return `
@@ -521,6 +626,7 @@ function renderSubjectStatistics(results) {
     }).join("");
 }
 
+
 function initStatistics(results) {
   renderHighestAverage(results);
   renderClassificationStatistics(results);
@@ -530,7 +636,7 @@ function initStatistics(results) {
 
 
 // ========================================
-// 11. SO SÁNH SINH VIÊN
+// 12. SO SÁNH SINH VIÊN
 // ========================================
 
 function fillComparisonOptions() {
@@ -540,23 +646,33 @@ function fillComparisonOptions() {
     </option>
   `).join("");
 
-  document.getElementById("student1").innerHTML = options;
-  document.getElementById("student2").innerHTML = options;
+  document.getElementById("student1").innerHTML =
+    options;
+
+  document.getElementById("student2").innerHTML =
+    options;
 
   if (students.length > 1) {
-    document.getElementById("student2").value = students[1].id;
+    document.getElementById("student2").value =
+      students[1].id;
   }
 }
+
 
 function compareStudents() {
   const id1 = document.getElementById("student1").value;
   const id2 = document.getElementById("student2").value;
 
-  const message = document.getElementById("comparisonMessage");
-  const tbody = document.getElementById("comparisonTable");
+  const message =
+    document.getElementById("comparisonMessage");
+
+  const tbody =
+    document.getElementById("comparisonTable");
 
   if (id1 === id2) {
-    message.textContent = "Hãy chọn hai sinh viên khác nhau.";
+    message.textContent =
+      "Hãy chọn hai sinh viên khác nhau.";
+
     tbody.innerHTML = "";
     return;
   }
@@ -565,8 +681,13 @@ function compareStudents() {
 
   const results = getStudentResults();
 
-  const student1 = results.find(student => student.id === id1);
-  const student2 = results.find(student => student.id === id2);
+  const student1 = results.find(
+    student => student.id === id1
+  );
+
+  const student2 = results.find(
+    student => student.id === id2
+  );
 
   if (!student1 || !student2) return;
 
@@ -596,7 +717,10 @@ function compareStudents() {
         <td>${row.name}</td>
         <td>${row.score1.toFixed(2)}</td>
         <td>${row.score2.toFixed(2)}</td>
-        <td>${difference > 0 ? "+" : ""}${difference.toFixed(2)}</td>
+        <td>
+          ${difference > 0 ? "+" : ""}
+          ${difference.toFixed(2)}
+        </td>
       </tr>
     `;
   }).join("");
@@ -604,7 +728,7 @@ function compareStudents() {
 
 
 // ========================================
-// 12. KHỞI ĐỘNG
+// 13. KHỞI ĐỘNG ỨNG DỤNG
 // ========================================
 
 async function startApp() {
@@ -613,10 +737,13 @@ async function startApp() {
   if (!loaded) return;
 
   const results = getStudentResults();
+
   const page = document.body.dataset.page;
 
+  // TRANG CHỦ
   if (page === "home") {
     fillEditOptions();
+
     refreshHome();
 
     document.getElementById("searchInput")
@@ -644,10 +771,12 @@ async function startApp() {
       .addEventListener("submit", handleGradeSubmit);
   }
 
+  // TRANG THỐNG KÊ
   if (page === "statistics") {
     initStatistics(results);
   }
 
+  // TRANG SO SÁNH
   if (page === "comparison") {
     fillComparisonOptions();
 
