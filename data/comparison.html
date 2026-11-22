@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>So sánh sinh viên</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="comparison">
+
+<header>
+  <h1>So sánh sinh viên</h1>
+  <p>So sánh kết quả học tập giữa hai sinh viên</p>
+</header>
+
+<nav>
+  <a href="index.html">Trang chủ</a>
+  <a href="statistics.html">Thống kê</a>
+  <a href="comparison.html">So sánh sinh viên</a>
+</nav>
+
+<main class="container">
+
+  <section class="panel">
+    <h2>Chọn sinh viên</h2>
+
+    <div class="form-grid">
+      <div>
+        <label for="student1">Sinh viên thứ nhất</label>
+        <select id="student1"></select>
+      </div>
+
+      <div>
+        <label for="student2">Sinh viên thứ hai</label>
+        <select id="student2"></select>
+      </div>
+    </div>
+
+    <button id="compareButton" type="button">So sánh</button>
+    <p id="comparisonMessage"></p>
+  </section>
+
+  <section class="panel">
+    <h2>Kết quả so sánh</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Môn học</th>
+            <th id="student1Name">Sinh viên 1</th>
+            <th id="student2Name">Sinh viên 2</th>
+            <th>Chênh lệch</th>
+          </tr>
+        </thead>
+        <tbody id="comparisonTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Quản lý điểm sinh viên</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
